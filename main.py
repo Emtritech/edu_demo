@@ -116,8 +116,8 @@ async def signin(email: str = Depends, password: str = Depends):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@app.post("/register-item/")
-async def register_item(
+@app.post("/add_credentials/")
+async def add_credentials(
 
         uuid: str = Form(...),
         passport: UploadFile = File(...),
