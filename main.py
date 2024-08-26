@@ -103,6 +103,7 @@ async def signup(user: schemas.Signup):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @app.get("/signin/", response_model=schemas.ResponseSignup)
 async def signin(email: str = Depends, password: str = Depends):
     try:
@@ -118,14 +119,11 @@ async def signin(email: str = Depends, password: str = Depends):
 @app.post("/register-item/")
 async def register_item(
 
-
         uuid: str = Form(...),
         passport: UploadFile = File(...),
         waec: UploadFile = File(...),
         date_of_birth_cert: UploadFile = File(...),
         state_of_origin_cert: UploadFile = File(...),
-
-
 
 ):
     # Upload image to Firebase
@@ -133,10 +131,6 @@ async def register_item(
     waec_url = crud.upload_to_firebase(waec, "waec")
     state_of_origin_cert_url = crud.upload_to_firebase(state_of_origin_cert, "state_of_origin_cert")
     date_of_birth_cert_url = crud.upload_to_firebase(date_of_birth_cert, "date_of_birth_cert")
-
-
-
-
 
     now = datetime.now()
     date_string = now.strftime("%Y-%m-%d")
@@ -158,6 +152,7 @@ async def register_item(
         raise HTTPException(status_code=500, detail="Failed to upload credentials ")
 
     return {"message": "Credentials uploaded successfully"}
+
 
 #
 #
@@ -525,29 +520,44 @@ async def register_item(
 #     return {"message": "OTP verified successfully"}
 #
 #
-# @app.get("/dashboard/{uuid}", response_model=schemas.ResponseSignup)
-# async def get_user_dashboard(uuid: str):
-#     user = await crud.db["users"].find_one({"uuid": uuid})
-#
-#     if not user:
-#         raise HTTPException(status_code=404, detail="User not found")
-#
-#     # Convert MongoDB user document to ResponseSignup model
-#     user_data = schemas.ResponseSignup(
-#         uuid=user.get("uuid"),
-#         full_name=user.get("full_name"),
-#         email_address=user.get("email_address"),
-#         date_of_birth=user.get("date_of_birth"),
-#         address=user.get("address"),
-#         id_no=user.get("id_no"),
-#         profile_picture=user.get("profile_picture"),
-#         phone_number=user.get("phone_number"),
-#         gender=user.get("gender"),
-#         valid_id_type=user.get("valid_id_type"),
-#         id_card_image=user.get("id_card_image"),
-#         password=user.get("password"),
-#         is_verified=user.get("is_verified"),
-#         items=user.get("items", {})  # Assuming items are stored as a dictionary
-#     )
-#
-#     return user_data
+@app.get("/dashboard/{uuid}", response_model=schemas.ResponseSignup)
+async def get_user_dashboard(uuid: str):
+    user = await crud.db["users"].find_one({"uuid": uuid})
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Convert MongoDB user document to ResponseSignup model
+    user_data = schemas.ResponseSignup(
+        uuid=user.get("uuid"),
+        full_name=user.get("full_name"),
+        email_address=user.get("email_address"),
+        date_of_birth=user.get("date_of_birth"),
+        address=user.get("address"),
+        phone_number=user.get("phone_number"),
+        gender=user.get("gender"),
+    )
+
+    return user_data
+
+
+@app.get("/credentials/{uuid}", response_model=schemas.Credentials)
+async def get_credentials(uuid: str):
+    creds = await crud.db["credentials"].find_one({"uuid": uuid})
+
+    if not creds:
+        raise HTTPException(status_code=404, detail="Credentials not found")
+
+    # Convert MongoDB user document to ResponseSignup model
+    cred_data = schemas.Credentials(
+        uuid=creds.get("uuid"),
+        passport=creds.get("passport"),
+        waec=creds.get("waec"),
+        date_of_birth_cert=creds.get("date_of_birth_cert"),
+        state_of_origin_cert=creds.get("state_of_origin_cert"),
+        registered_date=creds.get("registered_date"),
+
+    )
+
+    return cred_data
+
