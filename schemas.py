@@ -80,9 +80,9 @@ class Credentials(BaseModel):
 #     is_verified: bool
 #
 #
-# class Signin(BaseModel):
-#     email_address: EmailStr
-#     password: str
+class Signin(BaseModel):
+    email_address: EmailStr
+    password: str
 
 #
 # class Tag(BaseModel):
