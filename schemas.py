@@ -81,7 +81,7 @@ class Credentials(BaseModel):
 #
 #
 class Signin(BaseModel):
-    email_address: EmailStr
+    email: EmailStr
     password: str
 
 #
