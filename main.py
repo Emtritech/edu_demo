@@ -104,7 +104,7 @@ async def signup(user: schemas.Signup):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/signin/", response_model=schemas.ResponseSignup)
+@app.post("/signin/", response_model=schemas.ResponseSignup)
 async def signin(email: str = Depends, password: str = Depends):
     try:
         email_address = email.lower()
